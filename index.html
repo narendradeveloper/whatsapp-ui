@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #c97f35;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #dce6e5;
+    color: rgb(8, 8, 8);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+}
+
+.search {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+.sidebar-menu {
+    flex-grow: 1;
+}
+
+.menu-item {
+    padding: 15px;
+    cursor: pointer;
+}
+
+.menu-item:hover,
+.menu-item.active {
+    background-color: #128c7e;
+}
+
+.main {
+    flex-grow: 1;
+    background-color: rgb(212, 157, 157);
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-header {
+    padding: 15px;
+    border-bottom: 11px solid #ccc;
+}
+
+.chat-list {
+    overflow-y: auto;
+}
+
+.chat-item {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid #ddd3d3;
+    cursor: pointer;
+}
+
+.chat-item:hover {
+    background-color: #d34d4d;
+}
+
+.chat-avatar {
+    background-color: #ccc;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.chat-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-name {
+    font-weight: bold;
+}
+
+.chat-message {
+    color: #555;
+}
+
+.chat-box {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border-left: 1px solid #ccc;
+}
+
+.chat-header {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin: 10px 0;
+}
+
+.chat-form {
+    display: flex;
+}
+
+.chat-form input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.chat-form button[type="submit"] {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #075e54;
+    color: white;
+    cursor: pointer;
+}
+
+.chat-form button[type="submit"]:hover {
+    background-color: #8ca3a0;
+}
+
+    </style>
+    <title>WhatsApp Chatbox</title>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>WhatsApp</h1>
+            </div>
+            <input type="text" class="search" placeholder="Search or start new chat..." />
+            <div class="sidebar-menu">
+                <div class="menu-item active">Chats</div>
+                <div class="menu-item">Status</div>
+                <div class="menu-item">Calls</div>
+            </div>
+            <div class="chat-list" id="chatList">
+                <div class="chat-item" data-chat="1">
+                    <div class="chat-avatar">N</div>
+                    <div class="chat-details">
+                        <div class="chat-name">Nani</div>
+                        <div class="chat-message">Hey! How's it going?</div>
+                    </div>
+                </div>
+                <div class="chat-item" data-chat="2">
+                    <div class="chat-avatar">R</div>
+                    <div class="chat-details">
+                        <div class="chat-name">Rishi</div>
+                        <div class="chat-message">Are you coming to the party?</div>
+                    </div>
+                </div>
+                <div class="chat-item" data-chat="3">
+                    <div class="chat-avatar">C</div>
+                    <div class="chat-details">
+                        <div class="chat-name">Charlie</div>
+                        <div class="chat-message">Let's catch up soon!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main">
+            <div class="main-header">
+                <h2>Chats</h2>
+            </div>
+            <div class="chat-box" id="chatBox" style="display: none;">
+                <div class="chat-header">
+                    <h3 id="chatName">Chat</h3>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <form class="chat-form" id="chatForm">
+                    <input type="text" placeholder="Type a message..." required />
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatItems = document.querySelectorAll('.chat-item');
+const chatBox = document.getElementById('chatBox');
+const chatName = document.getElementById('chatName');
+const chatMessages = document.getElementById('chatMessages');
+const chatForm = document.getElementById('chatForm');
+
+chatItems.forEach(item => {
+    item.addEventListener('click', function() {
+        const name = this.querySelector('.chat-name').textContent;
+        chatName.textContent = name;
+        chatBox.style.display = 'flex';
+        chatMessages.innerHTML = ''; // Clear previous messages
+    });
+});
+
+chatForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const input = this.querySelector('input[type="text"]');
+    const userMessage = input.value;
+
+    // Append user's message
+    appendMessage(userMessage, 'sent');
+    
+    // Simulate a reply
+    setTimeout(() => {
+        const replyMessage = "This is a reply message!";
+        appendMessage(replyMessage, 'received');
+    }, 500);
+
+    input.value = ''; // Clear input field
+});
+
+function appendMessage(text, type) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', type);
+    messageDiv.textContent = text;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
+}
+
+    </script>
+</body>
+</html>
